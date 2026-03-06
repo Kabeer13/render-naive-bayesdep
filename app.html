@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ML Model Runner</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:40px;
+}
+
+.container{
+background:#1e293b;
+padding:30px;
+border-radius:10px;
+width:600px;
+margin:auto;
+}
+
+input,select,button{
+margin:10px;
+padding:10px;
+border-radius:5px;
+border:none;
+}
+
+button{
+background:#22c55e;
+color:white;
+cursor:pointer;
+}
+
+#result{
+margin-top:20px;
+background:#334155;
+padding:15px;
+border-radius:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Machine Learning Model Runner</h2>
+
+<input type="file" id="csvFile">
+
+<br>
+
+<label>Model Type</label>
+<select id="modelType">
+<option value="classification">Classification</option>
+<option value="regression">Regression</option>
+</select>
+
+<br>
+
+<label>Target Column</label>
+<input type="text" id="target" placeholder="target column">
+
+<br>
+
+<label>Feature Columns (comma separated)</label>
+<input type="text" id="features" placeholder="col1,col2,col3">
+
+<br>
+
+<label>Test Size (0.1 - 0.5)</label>
+<input type="number" id="testSize" value="0.2" step="0.1">
+
+<br>
+
+<button onclick="runModel()">Run Model</button>
+
+<div id="result"></div>
+
+</div>
+
+
+<script>
+
+async function runModel(){
+
+let file = document.getElementById("csvFile").files[0]
+
+let target = document.getElementById("target").value
+let features = document.getElementById("features").value
+let testSize = document.getElementById("testSize").value
+let modelType = document.getElementById("modelType").value
+
+let formData = new FormData()
+
+formData.append("file",file)
+formData.append("target",target)
+formData.append("features",features)
+formData.append("test_size",testSize)
+formData.append("model_type",modelType)
+
+
+let response = await fetch("/run-model",{
+method:"POST",
+body:formData
+})
+
+let result = await response.json()
+
+document.getElementById("result").innerHTML =
+"<pre>"+JSON.stringify(result,null,2)+"</pre>"
+
+}
+
+</script>
+
+</body>
+</html>
